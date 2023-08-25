@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Blazr.Core\Blazr.Core\Blazr.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\Blazr.Diode\Blazr.Diode\Blazr.Diode.csproj" />
+    <ProjectReference Include="..\..\..\..\Blazr.OneWayStreet\Source\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -23,8 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Blazr.Core\Blazr.Core\Blazr.Core.csproj" />
+    <ProjectReference Include="..\..\..\Blazr.Diode\Blazr.Diode\Blazr.Diode.csproj" />
+    <ProjectReference Include="..\..\..\Blazr.OneWayStreet\Source\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
     <ProjectReference Include="..\..\Source\Application\Blazr.App.Core\Blazr.App.Core.csproj" />
     <ProjectReference Include="..\..\Source\Application\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Source\Libraries\Blazr.OneWayStreet.Diode\Blazr.OneWayStreet.Diode.csproj" />
   </ItemGroup>
 
 </Project>
