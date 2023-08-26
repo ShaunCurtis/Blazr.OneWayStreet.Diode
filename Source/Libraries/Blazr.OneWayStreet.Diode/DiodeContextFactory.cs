@@ -52,7 +52,6 @@ public class DiodeContextFactory
 
         var item = result.Item;
 
-
         var state = DiodeState.Existing();
 
         var contextResult = contextProvider.CreateContext(result.Item, state);
