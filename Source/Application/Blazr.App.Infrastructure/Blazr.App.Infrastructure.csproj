@@ -7,6 +7,9 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Blazr.Core" Version="1.0.0" />
+		<PackageReference Include="Blazr.Diode" Version="1.0.0" />
+		<PackageReference Include="Blazr.OneWayStreet" Version="1.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
 			<PrivateAssets>all</PrivateAssets>

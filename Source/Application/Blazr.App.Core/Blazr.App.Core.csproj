@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -7,13 +7,13 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Blazr.Core" Version="1.0.0" />
+		<PackageReference Include="Blazr.Diode" Version="1.0.0" />
+		<PackageReference Include="Blazr.OneWayStreet" Version="1.0.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\..\Blazr.Core\Blazr.Core\Blazr.Core.csproj" />
-	  <ProjectReference Include="..\..\..\..\Blazr.Diode\Blazr.Diode\Blazr.Diode.csproj" />
-	  <ProjectReference Include="..\..\..\..\Blazr.OneWayStreet\Source\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
 	  <ProjectReference Include="..\..\Libraries\Blazr.OneWayStreet.Diode\Blazr.OneWayStreet.Diode.csproj" />
 	</ItemGroup>
 
