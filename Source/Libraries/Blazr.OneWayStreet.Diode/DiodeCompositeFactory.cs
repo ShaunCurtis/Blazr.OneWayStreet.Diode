@@ -22,14 +22,72 @@ public class DiodeCompositeFactory
     /// </summary>
     /// <param name="uid"></param>
     /// <returns></returns>
-    public async Task<DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>> GetFromDataProviderAsync<TRootItem, TCollectionItem>(ItemQueryRequest request)
+    public Task<DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>> GetFromDataProviderAsync<TRootItem, TCollectionItem>(ItemQueryRequest request)
         where TRootItem : class, IDiodeEntity, IEntity, new()
         where TCollectionItem : class, IDiodeEntity, IEntity, new()
     {
-        // Gets the DI registered store from the DI Provider
+        // Get an instance of the type factory and use that to get the data 
+        var factory = ActivatorUtilities.CreateInstance<DiodeCompositeFactory<TRootItem, TCollectionItem>>(_serviceProvider, _dataBroker);
+
+        return factory.GetFromDataProviderAsync(request);
+    }
+
+    /// <summary>
+    /// Persists the Composite to the configured data store
+    /// </summary>
+    /// <returns></returns>
+    public Task<CommandResult> PersistToProviderAsync<TRootItem, TCollectionItem>(Guid uid)
+        where TRootItem : class, IDiodeEntity, IEntity, new()
+        where TCollectionItem : class, IDiodeEntity, IEntity, new()
+    {
+        // Get an instance of the type factory and use that to get the data 
+        var factory = ActivatorUtilities.CreateInstance<DiodeCompositeFactory<TRootItem, TCollectionItem>>(_serviceProvider, _dataBroker);
+
+        return factory.PersistToProviderAsync(uid);
+    }
+
+    /// <summary>
+    /// Creates a new instance of a composite context
+    /// Note that Composite Contexts must be registered in DI as Transient objects
+    /// </summary>
+    /// <typeparam name="TRootItem"></typeparam>
+    /// <typeparam name="TCollectionItem"></typeparam>
+    /// <returns></returns>
+    public DiodeResult<DiodeComposite<TRootItem, TCollectionItem>> CreateCompositeContext<TRootItem, TCollectionItem>()
+        where TRootItem : class, IDiodeEntity, IEntity, new()
+        where TCollectionItem : class, IDiodeEntity, IEntity, new()
+    {
+        // Get an instance of the type factory and use that to get the data 
+        var factory = ActivatorUtilities.CreateInstance<DiodeCompositeFactory<TRootItem, TCollectionItem>>(_serviceProvider, _dataBroker);
+
+        return factory.CreateCompositeContext();
+    }
+}
+
+public class DiodeCompositeFactory<TRootItem, TCollectionItem>
+    where TRootItem : class, IDiodeEntity, IEntity, new()
+    where TCollectionItem : class, IDiodeEntity, IEntity, new()
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IDataBroker _dataBroker;
+
+    public DiodeCompositeFactory(IServiceProvider serviceProvider, IDataBroker dataBroker)
+    {
+        _serviceProvider = serviceProvider;
+        _dataBroker = dataBroker;
+    }
+
+    /// <summary>
+    /// Gets the data to populate a InvoiceComposite from the data store
+    /// </summary>
+    /// <param name="uid"></param>
+    /// <returns></returns>
+    public async Task<DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>> GetFromDataProviderAsync(ItemQueryRequest request)
+    {
+        // Gets the DI registered DI Provider
         var contextProvider = _serviceProvider.GetService<DiodeCompositeProvider<TRootItem, TCollectionItem>>();
 
-        // deal with a null store Provider
+        // deal with a null context Provider
         if (contextProvider is null)
             return DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>.Failure($"Could not locate a registered context Provider for {typeof(TRootItem).Name}/{typeof(TCollectionItem).Name}");
 
@@ -61,29 +119,47 @@ public class DiodeCompositeFactory
     /// Persists the Composite to the configured data store
     /// </summary>
     /// <returns></returns>
-    public async Task<CommandResult> PersistToProviderAsync<TRootItem, TCollectionItem>(Guid uid)
-        where TRootItem : class, IDiodeEntity, IEntity, new()
-        where TCollectionItem : class, IDiodeEntity, IEntity, new()
+    public async Task<CommandResult> PersistToProviderAsync(Guid uid)
     {
-        // Gets the DI registered store from the DI Provider
+        // Gets the DI registered provider from the DI Provider
         var contextProvider = _serviceProvider.GetService<DiodeCompositeProvider<TRootItem, TCollectionItem>>();
 
         // deal with a null store Provider
         if (contextProvider is null)
             return CommandResult.Failure($"Could not locate a registered context Provider for {typeof(TRootItem).Name}/{typeof(TCollectionItem).Name}");
 
+        // get the composite context
         if (!contextProvider.TryGetContext(uid, out DiodeComposite<TRootItem, TCollectionItem>? context) || context.Root is null)
             return CommandResult.Failure($"No context exists with a Uid of {uid}");
 
-        var invoiceAggregateData = new DiodeCompositeData<TRootItem, TCollectionItem>(context.Uid, context.Root.AsDiodeEntityData, context.ItemsAsEntityData);
+        var composite = new DiodeCompositeData<TRootItem, TCollectionItem>(context.Uid, context.Root.AsDiodeEntityData, context.ItemsAsEntityData);
 
         var state = context.Root.State.GetCommandState();
 
-        var request = new CommandRequest<DiodeCompositeData<TRootItem, TCollectionItem>>(invoiceAggregateData, state);
+        var request = new CommandRequest<DiodeCompositeData<TRootItem, TCollectionItem>>(composite, state);
         var result = await _dataBroker.ExecuteCommandAsync(request);
 
         await context.MarkAsPersistedAsync();
 
         return result;
+    }
+
+    /// <summary>
+    /// Creates a new instance of a composite context
+    /// Note that Composite Contexts must be registered in DI as Transient objects
+    /// </summary>
+    /// <typeparam name="TRootItem"></typeparam>
+    /// <typeparam name="TCollectionItem"></typeparam>
+    /// <returns></returns>
+    public DiodeResult<DiodeComposite<TRootItem, TCollectionItem>> CreateCompositeContext()
+    {
+        // Gets the DI registered store from the DI Provider
+        var context = _serviceProvider.GetService<DiodeComposite<TRootItem, TCollectionItem>>();
+
+        // deal with a null store Provider
+        if (context is null)
+            return DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>.Failure($"Could not locate a registered composite context for {typeof(TRootItem).Name}/{typeof(TCollectionItem).Name}");
+
+        return DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>.Success(context);
     }
 }
