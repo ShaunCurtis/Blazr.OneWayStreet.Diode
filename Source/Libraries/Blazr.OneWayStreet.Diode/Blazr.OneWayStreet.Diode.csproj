@@ -1,38 +1,39 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>Blazr One Way Street And Diode Command Integration</Title>
-    <Authors>Shaun Curtis</Authors>
-    <Company>Cold Elm Coders</Company>
-    <Description>Integrates Diode with the Blazr One Way Street Command data pipeline</Description>
-    <Copyright>Use and Donate</Copyright>
-    <PackageReadmeFile>Package.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/ShaunCurtis/Blazr.OneWayStreet.Diode</RepositoryUrl>
-    <PackageReleaseNotes>Development Release</PackageReleaseNotes>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
-    <PackageLicenseFile>license.txt</PackageLicenseFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Blazr One Way Street And Diode Command Integration</Title>
+		<Authors>Shaun Curtis</Authors>
+		<Company>Cold Elm Coders</Company>
+		<Description>Integrates Diode with the Blazr One Way Street Command data pipeline - Not Released</Description>
+		<Copyright>Use and Donate</Copyright>
+		<PackageReadmeFile>Package.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/ShaunCurtis/Blazr.OneWayStreet.Diode</RepositoryUrl>
+		<PackageReleaseNotes>Development Release</PackageReleaseNotes>
+		<AssemblyVersion>1.1.0</AssemblyVersion>
+		<FileVersion>1.1.0</FileVersion>
+		<Version>1.1.0</Version>
+		<PackageLicenseFile>license.txt</PackageLicenseFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Blazr.Core" Version="1.0.0.1" />
-    <PackageReference Include="Blazr.Diode" Version="1.0.0" />
-    <PackageReference Include="Blazr.OneWayStreet" Version="1.1.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Blazr.Core" Version="1.0.2" />
+		<PackageReference Include="Blazr.Diode" Version="1.1.0" />
+		<PackageReference Include="Blazr.OneWayStreet" Version="1.2.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="license.txt">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Update="Package.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="license.txt">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Update="Package.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>

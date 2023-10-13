@@ -7,7 +7,7 @@ namespace Blazr.App.Core;
 
 public readonly record struct WeatherForecastUid(Guid Value);
 
-public sealed record WeatherForecast : IEntity, IDiodeEntity, ICommandEntity
+public sealed record WeatherForecast : IDiodeEntity, ICommandEntity
 {
     public WeatherForecastUid WeatherForecastUid { get; init; } = new WeatherForecastUid(Guid.NewGuid());
 
@@ -16,9 +16,6 @@ public sealed record WeatherForecast : IEntity, IDiodeEntity, ICommandEntity
     public int TemperatureC { get; init; }
 
     public string? Summary { get; init; }
-
-    // IEntity interface implementation 
-    public EntityUid EntityUid => new(WeatherForecastUid.Value);
 
     // IDiodeEntity interface implementation 
     public Guid Uid => WeatherForecastUid.Value;

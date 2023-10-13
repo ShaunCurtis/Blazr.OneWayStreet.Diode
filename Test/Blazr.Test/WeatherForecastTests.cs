@@ -25,7 +25,7 @@ public class WeatherForecastTests
     private ServiceProvider GetServiceProvider()
     {
         var services = new ServiceCollection();
-        services.AddAppServerInfrastructureServices();
+        services.AddAppServerMappedInfrastructureServices();
         services.AddLogging(builder => builder.AddDebug());
 
         var provider = services.BuildServiceProvider();
@@ -58,8 +58,8 @@ public class WeatherForecastTests
         // Get the Domain object - the Test data provider deals in dbo objects
         var testItem = DboWeatherForecastMap.Map(testDboItem);
 
-        // Build an item request instance
-        var request = new ItemQueryRequest(new(testUid));
+        // Build a Diode request instance
+        var request = new DiodeEntityRequest(testUid, testUid);
 
         // Execute the query against the factory
         var loadResult = await factory.GetEntityFromProviderAsync<WeatherForecast>(request);
@@ -97,8 +97,8 @@ public class WeatherForecastTests
 
         var expectedCount = _testDataProvider.WeatherForecasts.Count();
 
-        // Build an item request instance
-        var request = new ItemQueryRequest(new(testUid));
+        // Build a Diode request instance
+        var request = new DiodeEntityRequest(testUid, testUid);
 
         // Execute the query against the factory
         var loadResult = await factory.GetEntityFromProviderAsync<WeatherForecast>(request);
@@ -162,8 +162,8 @@ public class WeatherForecastTests
 
         var expectedCount = _testDataProvider.WeatherForecasts.Count() - 1;
 
-        // Build an item request instance
-        var request = new ItemQueryRequest(new(testUid));
+        // Build a Diode request instance
+        var request = new DiodeEntityRequest(testUid, testUid);
 
         // Execute the query against the factory
         var loadResult = await factory.GetEntityFromProviderAsync<WeatherForecast>(request);

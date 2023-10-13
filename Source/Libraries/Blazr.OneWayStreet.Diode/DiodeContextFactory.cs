@@ -28,8 +28,8 @@ public class DiodeContextFactory
     /// <typeparam name="T"></typeparam>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<DiodeResult<DiodeContext<T>>> GetEntityFromProviderAsync<T>(ItemQueryRequest request)
-    where T : class, IDiodeEntity, IEntity, new()
+    public async Task<DiodeResult<DiodeContext<T>>> GetEntityFromProviderAsync<T>(DiodeEntityRequest request)
+    where T : class, IDiodeEntity, new()
     {
         // Gets the DI registered store from the DI Provider
         var contextProvider = _serviceProvider.GetService<DiodeContextProvider<T>>();
@@ -38,21 +38,17 @@ public class DiodeContextFactory
         if (contextProvider is null)
             return DiodeResult<DiodeContext<T>>.Failure($"Could not locate a registered context Provider for {typeof(T).Name}");
 
-        // deal with a null store Provider
-        if (request.Uid is null)
-            return DiodeResult<DiodeContext<T>>.Failure($"The Request must contain an EntityUid for {typeof(T).Name}");
-
-        var uid = request.Uid.Value.Value;
-        var store = contextProvider.GetContext(uid);
+        var store = contextProvider.GetContext(request.Uid);
 
         // deal with an existing context
         if (store is not null)
-            return DiodeResult<DiodeContext<T>>.Failure($"A context already exists for {typeof(T).Name} and ID : {uid}");
+            return DiodeResult<DiodeContext<T>>.Failure($"A context already exists for {typeof(T).Name} and ID : {request.Uid}");
 
-        var result = await _dataBroker.ExecuteQueryAsync<T>(request);
+
+        var result = await _dataBroker.ExecuteQueryAsync<T>(ItemQueryRequest.Create(request.keyValue));
 
         if (!result.Successful || result.Item is null)
-            return DiodeResult<DiodeContext<T>>.Failure($"No entity retrieved from the data provider with a Uid of {request.Uid.Value}");
+            return DiodeResult<DiodeContext<T>>.Failure($"No entity retrieved from the data provider with a Uid of {request.Uid}");
 
         var item = result.Item;
 
@@ -69,7 +65,7 @@ public class DiodeContextFactory
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public DiodeResult<DiodeContext<T>> CreateNewEntity<T>(T? newEntity = null)
-        where T : class, IDiodeEntity, IEntity, new()
+        where T : class, IDiodeEntity, new()
     {
         // Gets the DI registered context from the DI Provider
         var contextProvider = _serviceProvider.GetService<DiodeContextProvider<T>>();
@@ -94,7 +90,7 @@ public class DiodeContextFactory
     /// <param name="uid"></param>
     /// <returns></returns>
     public async Task<CommandResult> PersistEntityToProviderAsync<T>(Guid uid)
-        where T : class, IDiodeEntity, IEntity, new()
+        where T : class, IDiodeEntity, new()
     {
         // Gets the DI registered context Provider
         var contextProvider = _serviceProvider.GetService<DiodeContextProvider<T>>();

@@ -22,9 +22,9 @@ public class DiodeCompositeFactory
     /// </summary>
     /// <param name="uid"></param>
     /// <returns></returns>
-    public Task<DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>> GetFromDataProviderAsync<TRootItem, TCollectionItem>(ItemQueryRequest request)
-        where TRootItem : class, IDiodeEntity, IEntity, new()
-        where TCollectionItem : class, IDiodeEntity, IEntity, new()
+    public Task<DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>> GetFromDataProviderAsync<TRootItem, TCollectionItem>(DiodeEntityRequest request)
+        where TRootItem : class, IDiodeEntity, new()
+        where TCollectionItem : class, IDiodeEntity, new()
     {
         // Get an instance of the type factory and use that to get the data 
         var factory = ActivatorUtilities.CreateInstance<DiodeCompositeFactory<TRootItem, TCollectionItem>>(_serviceProvider, _dataBroker);
@@ -37,8 +37,8 @@ public class DiodeCompositeFactory
     /// </summary>
     /// <returns></returns>
     public Task<CommandResult> PersistToProviderAsync<TRootItem, TCollectionItem>(Guid uid)
-        where TRootItem : class, IDiodeEntity, IEntity, new()
-        where TCollectionItem : class, IDiodeEntity, IEntity, new()
+        where TRootItem : class, IDiodeEntity, new()
+        where TCollectionItem : class, IDiodeEntity, new()
     {
         // Get an instance of the type factory and use that to get the data 
         var factory = ActivatorUtilities.CreateInstance<DiodeCompositeFactory<TRootItem, TCollectionItem>>(_serviceProvider, _dataBroker);
@@ -54,8 +54,8 @@ public class DiodeCompositeFactory
     /// <typeparam name="TCollectionItem"></typeparam>
     /// <returns></returns>
     public DiodeResult<DiodeComposite<TRootItem, TCollectionItem>> CreateCompositeContext<TRootItem, TCollectionItem>()
-        where TRootItem : class, IDiodeEntity, IEntity, new()
-        where TCollectionItem : class, IDiodeEntity, IEntity, new()
+        where TRootItem : class, IDiodeEntity, new()
+        where TCollectionItem : class, IDiodeEntity, new()
     {
         // Get an instance of the type factory and use that to get the data 
         var factory = ActivatorUtilities.CreateInstance<DiodeCompositeFactory<TRootItem, TCollectionItem>>(_serviceProvider, _dataBroker);
@@ -65,8 +65,8 @@ public class DiodeCompositeFactory
 }
 
 public class DiodeCompositeFactory<TRootItem, TCollectionItem>
-    where TRootItem : class, IDiodeEntity, IEntity, new()
-    where TCollectionItem : class, IDiodeEntity, IEntity, new()
+    where TRootItem : class, IDiodeEntity, new()
+    where TCollectionItem : class, IDiodeEntity, new()
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IDataBroker _dataBroker;
@@ -82,7 +82,7 @@ public class DiodeCompositeFactory<TRootItem, TCollectionItem>
     /// </summary>
     /// <param name="uid"></param>
     /// <returns></returns>
-    public async Task<DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>> GetFromDataProviderAsync(ItemQueryRequest request)
+    public async Task<DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>> GetFromDataProviderAsync(DiodeEntityRequest request)
     {
         // Gets the DI registered DI Provider
         var contextProvider = _serviceProvider.GetService<DiodeCompositeProvider<TRootItem, TCollectionItem>>();
@@ -91,14 +91,14 @@ public class DiodeCompositeFactory<TRootItem, TCollectionItem>
         if (contextProvider is null)
             return DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>.Failure($"Could not locate a registered context Provider for {typeof(TRootItem).Name}/{typeof(TCollectionItem).Name}");
 
-        var uid = request.Uid.Value;
+        var uid = request.Uid;
         var store = contextProvider.GetContext(uid);
 
         // deal with an existing context
         if (store is not null)
             return DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>.Failure($"A context already exists for {typeof(TRootItem).Name} and ID : {uid}");
 
-        var result = await _dataBroker.ExecuteQueryAsync<DiodeCompositeData<TRootItem, TCollectionItem>>(new ItemQueryRequest(new EntityUid(uid)));
+        var result = await _dataBroker.ExecuteQueryAsync<DiodeCompositeData<TRootItem, TCollectionItem>>(ItemQueryRequest.Create(request.keyValue));
 
         if (!result.Successful || result.Item is null)
             return DiodeResult<DiodeComposite<TRootItem, TCollectionItem>>.Failure($"No entity retrieved from the data provider with a Uid of {uid}");
