@@ -38,7 +38,11 @@ public class DiodeContextFactory
         if (contextProvider is null)
             return DiodeResult<DiodeContext<T>>.Failure($"Could not locate a registered context Provider for {typeof(T).Name}");
 
-        var uid = request.Uid.Value;
+        // deal with a null store Provider
+        if (request.Uid is null)
+            return DiodeResult<DiodeContext<T>>.Failure($"The Request must contain an EntityUid for {typeof(T).Name}");
+
+        var uid = request.Uid.Value.Value;
         var store = contextProvider.GetContext(uid);
 
         // deal with an existing context

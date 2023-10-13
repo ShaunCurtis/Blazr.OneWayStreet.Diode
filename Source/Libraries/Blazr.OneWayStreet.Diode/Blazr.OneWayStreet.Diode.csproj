@@ -19,9 +19,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazr.Core" Version="1.0.0" />
+    <PackageReference Include="Blazr.Core" Version="1.0.0.1" />
     <PackageReference Include="Blazr.Diode" Version="1.0.0" />
-    <PackageReference Include="Blazr.OneWayStreet" Version="1.0.0" />
+    <PackageReference Include="Blazr.OneWayStreet" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
